@@ -1,0 +1,120 @@
+# name: Terraform Validate
+
+# run-name: ${{ github.actor }} - ${{ github.ref_name }}
+
+# on:
+#   pull_request:
+#     branches:
+#       - main
+#   workflow_dispatch:
+
+# permissions:
+#   id-token: write
+#   contents: read
+#   issues: write
+
+# env:
+#   ARM_CLIENT_ID: "${{ secrets.AZURE_CLIENT_ID }}"
+#   ARM_SUBSCRIPTION_ID: "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+#   ARM_TENANT_ID: "${{ secrets.AZURE_TENANT_ID }}"
+
+# jobs:
+#   terraform_validate:
+#     name: "Format and Validate Code"
+#     runs-on: ubuntu-latest
+
+#     steps:
+#     - name: Checkout code
+#       uses: actions/checkout@v4
+
+#     - name: Setup Terraform
+#       uses: hashicorp/setup-terraform@v3
+
+#     - name: Check resource group configuration
+#       run: |
+#         if ! grep -q 'resource "azurerm_resource_group"' main.tf; then
+#           echo "Resource group configuration not found in main.tf!"
+#           exit 1
+#         fi
+#         echo "Resource group configuration is present."
+
+#     - name: Check storage account configuration
+#       run: |
+#         if ! grep -q 'resource "azurerm_storage_account"' modules/storage/main.tf; then
+#           echo "Storage account configuration not found in modules/storage/main.tf!"
+#           exit 1
+#         fi
+#         echo "Storage account configuration is present."
+
+#     - name: Check container configuration
+#       run: |
+#         if ! grep -q 'resource "azurerm_storage_container"' modules/storage/main.tf; then
+#           echo "Storage container configuration not found in modules/storage/main.tf!"
+#           exit 1
+#         fi
+#         echo "Storage container configuration is present."
+
+#     - name: Check network security group configuration
+#       run: |
+#         if ! grep -q 'resource "azurerm_network_security_group"' modules/network/main.tf; then
+#           echo "Network security group configuration not found in modules/network/main.tf!"
+#           exit 1
+#         fi
+#         echo "Network security group configuration is present."
+
+#     - name: Check virtual network configuration
+#       run: |
+#         if ! grep -q 'resource "azurerm_virtual_network"' modules/network/main.tf; then
+#           echo "Virtual network configuration not found in modules/network/main.tf!"
+#           exit 1
+#         fi
+#         echo "Virtual network configuration is present."
+
+#     - name: Check subnet configuration
+#       run: |
+#         if ! grep -q 'resource "azurerm_subnet"' modules/network/main.tf; then
+#           echo "Subnet configuration not found in modules/network/main.tf!"
+#           exit 1
+#         fi
+#         echo "Subnet configuration is present."
+
+#     - name: Check public IP configuration
+#       run: |
+#         if ! grep -q 'resource "azurerm_public_ip"' modules/network/main.tf; then
+#           echo "Public IP configuration not found in modules/network/main.tf!"
+#           exit 1
+#         fi
+#         echo "Public IP configuration is present."
+
+#     - name: Check virtual machine configuration
+#       run: |
+#         if ! grep -q 'resource "azurerm_linux_virtual_machine"' modules/compute/main.tf; then
+#           echo "Virtual machine configuration not found in modules/compute/main.tf!"
+#           exit 1
+#         fi
+#         echo "Virtual machine configuration is present."
+
+#     - name: Check network interface configuration
+#       run: |
+#         if ! grep -q 'resource "azurerm_network_interface"' modules/compute/main.tf; then
+#           echo "Network interface configuration not found in modules/compute/main.tf!"
+#           exit 1
+#         fi
+#         echo "Network interface configuration is present."
+
+#     - name: Check VM extension configuration
+#       run: |
+#         if ! grep -q 'resource "azurerm_virtual_machine_extension"' modules/compute/main.tf; then
+#           echo "VM extension configuration not found in modules/compute/main.tf!"
+#           exit 1
+#         fi
+#         echo "VM extension configuration is present."
+  
+#     - name: Terraform Fmt
+#       run: terraform fmt -check -recursive -diff
+    
+#     - name: Terraform Init
+#       run: terraform init -backend=false
+  
+#     - name: Terraform Validate
+#       run: terraform validate
