@@ -21,7 +21,6 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      # Швидкі sanity-check-и під твою структуру
       - name: Sanity checks
         shell: bash
         run: |
