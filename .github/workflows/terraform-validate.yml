@@ -2,7 +2,7 @@ name: Terraform Validate
 run-name: ${{ github.actor }} · ${{ github.ref_name }}
 
 on:
-  pull_request:
+  push:
     branches: [ develop ]
   workflow_dispatch:
 
