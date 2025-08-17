@@ -31,4 +31,6 @@ terraform apply -replace=module.compute.azurerm_virtual_machine_extension.custom
 terraform destroy -target='module.storage.azurerm_storage_blob.install_script'
 
 
-lifecycle { prevent_destroy = true }
+
+
+ARM_SUBSCRIPTION_ID="e03fc955-5f65-40e1-ae07-a2032a398b92"

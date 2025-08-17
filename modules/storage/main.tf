@@ -1,39 +1,15 @@
+data "azurerm_storage_account" "msa_django" {
+  name                = "djstoragealex"
+  resource_group_name = "django-storage-tf"
+}
 
-resource "azurerm_storage_account" "msa-django" {
-  name                     = "djangostorageaccalex13"
-  resource_group_name      = var.resource_group_name
-  location                 = var.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-
-  lifecycle {
-
-   prevent_destroy = true
-
- }
-
+data "azurerm_storage_container" "msc_django" {
+  name                 = "artifacts"
+  storage_account_name = data.azurerm_storage_account.msa_django.name
 }
 
 
-
-resource "azurerm_storage_container" "msc-django" {
-  name                  = "artifacts"
-  storage_account_id    = azurerm_storage_account.msa-django.id
-  container_access_type = "blob"
-
-  lifecycle {
-
-   prevent_destroy = true
-
- }
-
-
-}
-
-resource "azurerm_storage_blob" "install_script" {
-  name                   = "install-app.sh"
-  storage_account_name   = azurerm_storage_account.msa-django.name
-  storage_container_name = azurerm_storage_container.msc-django.name
-  type                   = "Block"
-  source                 = var.script_path
+locals {
+  install_script_name = "install-app.sh"
+  install_script_url  = "${data.azurerm_storage_account.msa_django.primary_blob_endpoint}${data.azurerm_storage_container.msc_django.name}/${local.install_script_name}"
 }

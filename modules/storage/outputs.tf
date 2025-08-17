@@ -1,20 +1,14 @@
 output "storage_account_name" {
-  description = "Ім’я створеного Storage Account"
-  value       = azurerm_storage_account.msa-django.name
+  value = data.azurerm_storage_account.msa_django.name
 }
 
 output "storage_account_id" {
-  description = "ID створеного Storage Account"
-  value       = azurerm_storage_account.msa-django.id
+  value = data.azurerm_storage_account.msa_django.id
 }
 
 output "container_name" {
-  description = "Ім’я створеного Storage Container"
-  value       = azurerm_storage_container.msc-django.name
+  value = data.azurerm_storage_container.msc_django.name
 }
 
-output "install_script_url" {
-  description = "HTTPS-URL до скрипта install-app.sh Blob Storage"
-  value       = azurerm_storage_blob.install_script.url
-}
 
+output "install_script_url"   { value = local.install_script_url }

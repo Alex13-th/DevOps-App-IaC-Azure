@@ -1,13 +1,33 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -euxo pipefail
+
 export DEBIAN_FRONTEND=noninteractive
 
-apt-get update -yq
-apt-get install -yq git python3-venv python3-pip build-essential pkg-config python3-dev
-apt-get install -yq default-libmysqlclient-dev || apt-get install -yq libmysqlclient-dev || apt-get install -yq libmariadb-dev
+# APT hardening (Jammy hook fix + чистий кеш)
+sudo rm -rf /var/lib/apt/lists/* || true
+sudo mkdir -p /var/lib/apt/lists/partial || true
+
+# update без post-invoke хуків
+sudo apt-get update \
+  -o Acquire::Retries=3 \
+  -o APT::Update::Post-Invoke-Success::= \
+  -o APT::Update::Post-Invoke::=
+
+# install також без конфліктних хуків
+sudo apt-get install -yq \
+  -o Dpkg::Options::=--force-confnew \
+  -o Dpkg::Options::=--force-confdef \
+  git python3-venv python3-pip build-essential pkg-config python3-dev
+
+sudo apt-get install -yq \
+  -o Dpkg::Options::=--force-confnew \
+  -o Dpkg::Options::=--force-confdef \
+  default-libmysqlclient-dev || \
+sudo apt-get install -yq libmysqlclient-dev || \
+sudo apt-get install -yq libmariadb-dev
 
 # чистий venv щоразу
-rm -rf /opt/app-venv
+sudo rm -rf /opt/app-venv
 python3 -m venv /opt/app-venv
 source /opt/app-venv/bin/activate
 pip install --upgrade pip setuptools wheel
@@ -16,8 +36,8 @@ pip install --upgrade pip setuptools wheel
 TMP="/tmp/devops-app"
 rm -rf "$TMP"
 git clone --depth 1 --branch develop https://github.com/Alex13-th/DevOps-App "$TMP"
-mkdir -p /app && rm -rf /app/* || true
-cp -r "$TMP/src/"* /app/
+sudo mkdir -p /app && sudo rm -rf /app/* || true
+sudo cp -r "$TMP/src/"* /app/
 
 # залежності
 [ -f /app/requirements.txt ] && pip install -r /app/requirements.txt
@@ -26,10 +46,10 @@ pip install gunicorn
 # django підготовка
 [ -f /app/manage.py ] && python /app/manage.py migrate --noinput || true
 [ -f /app/manage.py ] && python /app/manage.py collectstatic --noinput || true
-[ -f /app/todolist/settings.py ] && sed -i "s/^ALLOWED_HOSTS.*/ALLOWED_HOSTS = ['*']/" /app/todolist/settings.py || true
+[ -f /app/todolist/settings.py ] && sudo sed -i "s/^ALLOWED_HOSTS.*/ALLOWED_HOSTS = ['*']/" /app/todolist/settings.py || true
 
 # systemd unit
-cat >/etc/systemd/system/todoapp.service <<'EOF'
+sudo tee /etc/systemd/system/todoapp.service >/dev/null <<'EOF'
 [Unit]
 Description=todoapp (gunicorn)
 After=network-online.target
@@ -47,6 +67,6 @@ StandardError=journal
 WantedBy=multi-user.target
 EOF
 
-systemctl daemon-reload
-systemctl enable --now todoapp || true
+sudo systemctl daemon-reload
+sudo systemctl enable --now todoapp || true
 echo "✅ Deployed on gunicorn :8080"
