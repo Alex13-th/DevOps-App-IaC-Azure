@@ -1,36 +1,15 @@
-# DevOps-App-IaC-Azure
+# DevOps-App IaC (Azure)
 
+This project is Terraform IaC for lifting **infrastructure workloads** to Azure:
+- Creates a Resource Group, network (VNet/Subnet/NSG), Public IP, NIC, and VM.
+- **Storage** (backend for Terraform and artifacts) is not created — it is connected as `data` from an existing account.
 
-# 1) Група ресурсів
-az group create -n django-backend-storage -l westeurope
+## What's inside
+- `modules/network` — network resources
+- `modules/compute` — virtual machine + Custom Script Extension
+- `modules/storage` — only `data` (SA/container) and script URL formation
 
-# 2) Storage Account (назва лише нижній регістр, 3–24 символи, унікальна глобально)
-az storage account create \
-  -n djstoragealex \
-  -g django-backend-storage \
-  -l westeurope \
-  --sku Standard_LRS
+> Note: Terraform backend is stored in a separate Storage Account.
 
-# 3) Контейнер під state (назва — нижній регістр; використовуй AAD-автентифікацію)
-az storage container create \
-  --account-name djstoragealex \
-  -n backend-tfstate \
-  --auth-mode login
-
-
-
-
-# перезалити блоб зі скриптом
-terraform apply -target=module.storage.azurerm_storage_blob.install_script
-
-# перевстановити лише VM extension (щоб виконав новий скрипт)
-terraform apply -replace=module.compute.azurerm_virtual_machine_extension.custom_script
-
-
-# видалити лише цей блоб
-terraform destroy -target='module.storage.azurerm_storage_blob.install_script'
-
-
-
-
-ARM_SUBSCRIPTION_ID="e03fc955-5f65-40e1-ae07-a2032a398b92"
+## Launch
+For launch steps and detailed instructions, see **[INSTRUCTION.md](INSTRUCTION.md)**.
