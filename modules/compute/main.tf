@@ -21,7 +21,7 @@ resource "azurerm_virtual_machine" "main" {
   vm_size               = var.vm_size
 
 
-  delete_os_disk_on_termination = true
+  delete_os_disk_on_termination    = true
   delete_data_disks_on_termination = true
 
   storage_image_reference {
@@ -43,8 +43,8 @@ resource "azurerm_virtual_machine" "main" {
   os_profile_linux_config {
     disable_password_authentication = true
 
-  ssh_keys {
-      path    = "/home/azureuser/.ssh/authorized_keys"
+    ssh_keys {
+      path     = "/home/azureuser/.ssh/authorized_keys"
       key_data = file(var.ssh_public_key_path)
     }
   }

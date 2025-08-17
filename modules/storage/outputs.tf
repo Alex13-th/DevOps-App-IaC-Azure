@@ -11,4 +11,4 @@ output "container_name" {
 }
 
 
-output "install_script_url"   { value = local.install_script_url }
+output "install_script_url" { value = local.install_script_url }

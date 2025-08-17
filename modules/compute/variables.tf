@@ -6,7 +6,7 @@ variable "subnet_id" {
 variable "public_ip_id" {
   type = string
 }
-variable "nsg_id"       {
+variable "nsg_id" {
   type = string
 }
 
@@ -19,7 +19,7 @@ variable "location" {
 }
 
 variable "vm_name" {
-  type = string
+  type    = string
   default = "djangobox"
 }
 
